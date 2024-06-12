@@ -22,11 +22,28 @@ let gridRecords = [
     },
   ];
 
-export function grid(state = gridRecords, action) {
+let gridState = {
+  records: [...gridRecords],
+  filter: "",
+};
+
+export function grid(state = gridState, action) {
   switch (action.type) {
-    case "FILTER":
-      //I also do something on filter action
-      return state;
+    case "TOGGLE_ACTIVE":
+      let newState = { ...state };
+      newState.records = [...newState.records];
+      newState.records[action.value] = {
+        ...newState.records[action.value],
+        active: !newState.records[action.value].active,
+      };
+      return newState;
+
+    case "FILTER": {
+      let newState = { ...state };
+      newState.filter = action.value;
+      return newState;
+    }
+
     default:
       return state;
   }

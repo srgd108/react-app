@@ -1,6 +1,6 @@
-import { GridComponent } from "./Components/grid";
 import { Link, Route, Routes } from "react-router-dom";
-import { UserDetails } from "./Components/user-details";
+import { UserDetails } from "../Components/user-details";
+import { GridComponent } from "../Components/grid";
 
 export function RouteApp(props) {
   return (

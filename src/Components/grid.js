@@ -1,19 +1,7 @@
 import "bootstrap/dist/css/bootstrap.css";
 import PropTypes from "prop-types";
-import {
-  useState,
-  useCallback,
-  useRef,
-  useEffect,
-  cloneElement,
-  memo,
-} from "react";
-
-const dataSource = [
-  { firstName: "John", lastName: "Doe", active: false },
-  { firstName: "Mary", lastName: "Moe", active: false },
-  { firstName: "Peter", lastName: "Noname", active: true },
-];
+import { useDispatch, useSelector } from "react-redux";
+import { cloneElement, memo, useEffect, useRef } from "react";
 
 GridRecord.propTypes = {
   record: PropTypes.shape({
@@ -39,40 +27,38 @@ function GridRecord({ record, toggleActive, index }) {
   );
 }
 
-GridRecord.defaultProps = {
-  record: { firstName: "N/A", lastName: "N/A", active: false },
-};
-
 const MemoGridRecord = memo(GridRecord);
 
 export function GridComponent({ children }) {
-  const [records, setRecords] = useState(dataSource);
-  const toggle = useCallback(toggleActive, [records]);
-
-  function toggleActive(index) {
-    // if change the active flag inside record, we must replace the record itself
-    records[index] = { ...records[index], active: !records[index].active };
-
-    //records[index].active = !records[index].active ; // <== DON’T DO LIKE THIS!
-    setRecords([...records]);
-  }
+  const dispatch = useDispatch();
+  let toggleActive = (index) => {
+    dispatch({
+      type: "TOGGLE_ACTIVE",
+      value: index,
+    });
+  };
 
   function handleFilterChange(e) {
     let value = e.target.value;
-    setRecords(
-      dataSource.filter((record) =>
-        record.firstName.toUpperCase().includes(value.toUpperCase())
-      )
-    );
+    dispatch({
+      type: "FILTER",
+      value,
+    });
   }
 
-  let recordsGrid = records.map((record, index) => {
+  const records = useSelector((state) => state.grid.records);
+  const filter = useSelector((state) => state.grid.filter);
+  let gridRecords = records.filter((record) =>
+    record.firstName.toUpperCase().includes(filter.toUpperCase())
+  );
+
+  let recordsGrid = gridRecords.map((record, index) => {
     return (
       <MemoGridRecord
         record={record}
         key={index}
         index={index}
-        toggleActive={toggle}
+        toggleActive={() => toggleActive(index)}
       />
     );
   });
@@ -106,3 +92,11 @@ export function GridComponent({ children }) {
     </div>
   );
 }
+
+// function mapStateToProps(state) {
+//   return {
+//     records: state.grid,
+//   };
+// }
+
+// export default connect(mapStateToProps)(GridComponent);

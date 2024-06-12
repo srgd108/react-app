@@ -3,9 +3,9 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
-import { RouteApp } from "./route-app";
 import { Provider } from "react-redux";
 import configureStore from "./Store/index";
+import { RouteApp } from "./Containers/route-app";
 
 const store = configureStore();
 
@@ -13,9 +13,11 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
   <React.StrictMode>
+    <Provider store={store}>
       <BrowserRouter>
         <RouteApp />
       </BrowserRouter>
+    </Provider>
   </React.StrictMode>
 );
 
